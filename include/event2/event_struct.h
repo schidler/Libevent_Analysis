@@ -107,7 +107,7 @@ struct event;
 
 struct event_callback {
 	TAILQ_ENTRY(event_callback) evcb_active_next;	/*事件回调结构体尾队列节点*/
-	short evcb_flags;
+	short evcb_flags;		/*事件标志*/
 	ev_uint8_t evcb_pri;	/* smaller numbers are higher priority*/
 	ev_uint8_t evcb_closure;	/*event_base执行事件处理器回调函数时的行为*/
 	/* allows us to adopt for different types of events */
