@@ -106,10 +106,10 @@ struct name {								\
 struct event;
 
 struct event_callback {
-	TAILQ_ENTRY(event_callback) evcb_active_next;
+	TAILQ_ENTRY(event_callback) evcb_active_next;	/*事件回调结构体尾队列节点*/
 	short evcb_flags;
 	ev_uint8_t evcb_pri;	/* smaller numbers are higher priority*/
-	ev_uint8_t evcb_closure;	
+	ev_uint8_t evcb_closure;	/*event_base执行事件处理器回调函数时的行为*/
 	/* allows us to adopt for different types of events */
         union {
 		void (*evcb_callback)(evutil_socket_t, short, void *);
@@ -117,7 +117,7 @@ struct event_callback {
 		void (*evcb_evfinalize)(struct event *, void *);
 		void (*evcb_cbfinalize)(struct event_callback *, void *);
 	} evcb_cb_union;
-	void *evcb_arg;
+	void *evcb_arg;		/*事件回调函数参数*/
 };
 
 struct event_base;
@@ -126,31 +126,31 @@ struct event {
 
 	/* for managing timeouts */
 	union {
-		TAILQ_ENTRY(event) ev_next_with_common_timeout;
-		int min_heap_idx;
+		TAILQ_ENTRY(event) ev_next_with_common_timeout;		/*定时器在通用定时器队列中的位置*/
+		int min_heap_idx;	/*定时器在时间堆中的位置*/
 	} ev_timeout_pos;
-	evutil_socket_t ev_fd;
+	evutil_socket_t ev_fd;	/*文件描述符值或信号值*/
 
-	struct event_base *ev_base;
+	struct event_base *ev_base;		/*事件处理器从属的event_base实例*/
 
 	union {
 		/* used for io events */
 		struct {
 			LIST_ENTRY (event) ev_io_next;
 			struct timeval ev_timeout;
-		} ev_io;	/*IO事件尾队列*/
+		} ev_io;	/*IO事件尾队列节点*/
 
 		/* used by signal events */
 		struct {
 			LIST_ENTRY (event) ev_signal_next;
 			short ev_ncalls;	//执行回调函数的次数
 			/* Allows deletes in callback */
-			short *ev_pncalls;
-		} ev_signal;	/*信号事件尾队列*/
-	} ev_;		/*IO或信号事件尾队列*/
+			short *ev_pncalls;		/*指向NULL或者ev_ncalls*/
+		} ev_signal;	/*信号事件尾队列节点*/
+	} ev_;
 
 	short ev_events;	/*事件类型*/
-	short ev_res;		/* result passed to event callback */
+	short ev_res;		/* result passed to event callback *//*当前激活事件的类型*/
 	struct timeval ev_timeout;	/*通用事件定时器*/
 };
 
