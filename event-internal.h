@@ -302,7 +302,7 @@ struct event_base {
 #ifndef EVENT__DISABLE_THREAD_SUPPORT
 	/* threading support */
 	/** The thread currently running the event_loop for this base */
-	unsigned long th_owner_id;		/*当前运行该event_base的事件循环的线程*/
+	unsigned long th_owner_id;		/*当前运行event_base的事件循环的线程*/
 	/** A lock to prevent conflicting accesses to this event_base */
 	void *th_base_lock;		/*对event_base的独占锁*/
 	/** A condition that gets signalled when we're done processing an
