@@ -7,14 +7,14 @@
  */
 
 /* Compatibility for possible missing IPv6 declarations */
-#include "../util-internal.h"
+#include "../util-internal.h"  	/*Libevent内部使用的常用函数的辅助头文件*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <sys/types.h>	/*Linux系统的基本系统数据类型的头文件*/
+#include <sys/stat.h>	/*Linux系统定义文件状态所在的伪标准头文件*/
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -41,7 +41,7 @@
 #include <event2/keyvalq_struct.h>
 
 #ifdef EVENT__HAVE_NETINET_IN_H
-#include <netinet/in.h>
+#include <netinet/in.h>		/*互联网地址族头文件*/
 # ifdef _XOPEN_SOURCE_EXTENDED
 #  include <arpa/inet.h>
 # endif
@@ -87,12 +87,13 @@ static const struct table_entry {
 };
 
 /* Try to guess a good content-type for 'path' */
+/*获取所请求文件的扩展名*/
 static const char *
 guess_content_type(const char *path)
 {
 	const char *last_period, *extension;
 	const struct table_entry *ent;
-	last_period = strrchr(path, '.');
+	last_period = strrchr(path, '.');	/*查找字符在指定字符串中从后面开始的第一次出现的位置*/
 	if (!last_period || strchr(last_period, '/'))
 		goto not_found; /* no exension */
 	extension = last_period + 1;
@@ -155,6 +156,7 @@ dump_request_cb(struct evhttp_request *req, void *arg)
  * any other callback.  Like any evhttp server callback, it has a simple job:
  * it must eventually call evhttp_send_error() or evhttp_send_reply().
  */
+/*无法匹配其它回调函数时调用*/
 static void
 send_document_cb(struct evhttp_request *req, void *arg)
 {
@@ -329,11 +331,11 @@ syntax(void)
 int
 main(int argc, char **argv)
 {
-	struct event_base *base;
+	struct event_base *base;	/*Reactor*/
 	struct evhttp *http;
 	struct evhttp_bound_socket *handle;
 
-	unsigned short port = 0;
+	unsigned short port = 0;	/*监听端口*/
 #ifdef _WIN32
 	WSADATA WSAData;
 	WSAStartup(0x101, &WSAData);
@@ -367,7 +369,7 @@ main(int argc, char **argv)
 	evhttp_set_gencb(http, send_document_cb, argv[1]);
 
 	/* Now we tell the evhttp what port to listen on */
-	handle = evhttp_bind_socket_with_handle(http, "0.0.0.0", port);
+	handle = evhttp_bind_socket_with_handle(http, "0.0.0.0", port);		/*绑定IP和端口*/
 	if (!handle) {
 		fprintf(stderr, "couldn't bind to port %d. Exiting.\n",
 		    (int)port);
@@ -412,7 +414,7 @@ main(int argc, char **argv)
 		}
 	}
 
-	event_base_dispatch(base);
+	event_base_dispatch(base);	/*分发事件*/
 
 	return 0;
 }
